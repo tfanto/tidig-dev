@@ -1,0 +1,6 @@
+.settings/org.eclipse.m2e.core.prefs
+.project
+.classpath
+*.prefs
+tidig-dev-db/target/
+tidig-dev-server/target/
