@@ -30,7 +30,7 @@ public class EmployeeRestTest {
                 .accept(APPLICATION_JSON)
                 .header("X-ApiKey", "TEST_APIKEY_HEADER")
                 .exchange()
-                .expectStatus().isOk();
+                .expectStatus().is4xxClientError();
     }
 
     @Test
@@ -46,7 +46,7 @@ public class EmployeeRestTest {
                                 .build())
                 .accept(APPLICATION_JSON)
                 .exchange()
-                .expectStatus().isOk();
+                .expectStatus().is4xxClientError();
     }
 
 
@@ -81,12 +81,12 @@ public class EmployeeRestTest {
                 .accept(APPLICATION_JSON)
                 .header("X-ApiKey", apiKeyValue)
                 .exchange()
-                .expectStatus().isOk()
+                .expectStatus().is4xxClientError()
                 .expectBody(String.class)
                 .returnResult();
 
         String jsonTree = entityExchangeResult.getResponseBody();
-        assertNull(jsonTree);
+        assertNotNull(jsonTree);
     }
 
     @Test
@@ -121,12 +121,12 @@ public class EmployeeRestTest {
                 .accept(APPLICATION_JSON)
                 .header("X-ApiKey", apiKeyValue)
                 .exchange()
-                .expectStatus().isOk()
+                .expectStatus().is4xxClientError()
                 .expectBody(String.class)
                 .returnResult();
 
         String jsonTree = entityExchangeResult.getResponseBody();
-        assertNull(jsonTree);
+        assertNotNull(jsonTree);
     }
 
 
