@@ -21,6 +21,11 @@ import java.util.*;
 public class ReportedTimeService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReportedTimeService.class);
+    
+    
+    String timesql = "select rt.customer_id,rt.project_id,rt.activity_id, rt.emp_id,rt.reported_date,rt.reported_time,rt.time_row_id,rt.is_submitted,rt.description,c.customer_name,a.activity_name from databas.reportedtime rt join databas.customer c on rt.customer_id = c.customer_id left outer join  databas.activity a on rt.customer_id = a.customer_id AND rt.project_id = a.project_id AND rt.activity_id = a.activity_id ";
+    
+    
 
     @Autowired
     EmployeeService employeeService;
@@ -39,7 +44,8 @@ public class ReportedTimeService {
         Set<String> allowedToSeeEmployees = toIdStrings(myEmployees);
         allowedToSeeEmployees.add(apiUser); // myself
 
-        String sql = "select rt.customer_id ,rt.project_id,rt.activity_id, rt.emp_id,rt.reported_date,rt.reported_time,rt.time_row_id,rt.is_submitted,rt.description from databas.reportedtime rt ";
+        //String sql = "select rt.customer_id ,rt.project_id,rt.activity_id, rt.emp_id,rt.reported_date,rt.reported_time,rt.time_row_id,rt.is_submitted,rt.description from databas.reportedtime rt ";
+        String sql = timesql;
         String whereClause = buildWhereClause(empId, fromDate, toDate, customerId, customerName, projectId, projectName, allowedToSeeEmployees);
         sql += whereClause;
         LOGGER.info(sql);
@@ -64,14 +70,19 @@ public class ReportedTimeService {
                 Long rs_RowId = resultSet.getLong("time_row_id");
                 Boolean rs_Isubmitted = resultSet.getBoolean("is_submitted");
                 String rs_Description = resultSet.getString("description");
+                String rs_customerName = resultSet.getString("customer_name");
+                String rs_articleName = resultSet.getString("activity_name");
 
                 LocalDateTime reportedDate = rs_ReportedDate.toLocalDateTime();
 
-                CustomerDto customer = getCustomer(connection, rs_CustomerId);
+                CustomerDto customer = new CustomerDto();
+                customer.setCustomerId(rs_CustomerId);
+                customer.setName(rs_customerName);
                 line.setCustomer(customer);
 
-                ArticleDto article = getArticle(connection, rs_CustomerId,rs_ProjectId,rs_ActivityId);
-                //String activityName = getProjectNameAsActivity(connection, rs_CustomerId,rs_ProjectId);
+                ArticleDto article = new ArticleDto();
+                article.setArticleId(rs_ActivityId);
+                article.setName(rs_articleName);
 
 
                 line.setProject(rs_ProjectId);
@@ -100,57 +111,6 @@ public class ReportedTimeService {
         return resultList;
 
     }
-
-    
-    private ArticleDto getArticle(Connection connection, Long customerId, Long projectId, Long articleId) {
-        ArticleDto ret = new ArticleDto();
-        String sqlArticle = "select customer_id, project_id, activity_id, activity_name from databas.activity where customer_id=? and project_id=? and activity_id=?";
-        try (PreparedStatement stmtArticle = connection.prepareStatement(sqlArticle);){
-
-
-            stmtArticle.setLong(1, customerId);
-            stmtArticle.setLong(2, projectId);
-            stmtArticle.setLong(3, articleId);
-            ResultSet rs_Customer = stmtArticle.executeQuery();
-            if (rs_Customer.next()) {
-                ret.setArticleId(articleId);
-                ret.setName(rs_Customer.getString(2));
-            }
-            try {
-                rs_Customer.close();
-            } catch (SQLException ce) {
-                //
-            }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        return ret;
-
-    }
-
-    private CustomerDto getCustomer(Connection connection, Long customerId) {
-        CustomerDto ret = new CustomerDto();
-        String sqlCustomer = "select customer_id, customer_name from databas.customer where customer_id=?";
-        try (PreparedStatement stmtCustomer = connection.prepareStatement(sqlCustomer);){
-
-            stmtCustomer.setLong(1, customerId);
-            ResultSet rs_Customer = stmtCustomer.executeQuery();
-            if (rs_Customer.next()) {
-                ret.setCustomerId(customerId);
-                ret.setName(rs_Customer.getString(2));
-            }
-            try {
-                rs_Customer.close();
-            } catch (SQLException ce) {
-                //
-            }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        return ret;
-    }
-
-
 
 
 
