@@ -101,32 +101,7 @@ public class ReportedTimeService {
 
     }
 
-    private String getProjectNameAsActivity(Connection connection, Long customerId, Long projectId) {
-        String sqlProject = "select project_name from databas.project where customer_id=? and project_id=? ";
-        String ret = null;
-        try (PreparedStatement stmtProject = connection.prepareStatement(sqlProject);){
-
-
-            stmtProject.setLong(1, customerId);
-            stmtProject.setLong(2, projectId);
-            ResultSet rs_Project = stmtProject.executeQuery();
-            if (rs_Project.next()) {
-                ret = rs_Project.getString(2);
-            }
-            try {
-                rs_Project.close();
-            } catch (SQLException ce) {
-                //
-            }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        return ret;
-
-    }
-
-
-
+    
     private ArticleDto getArticle(Connection connection, Long customerId, Long projectId, Long articleId) {
         ArticleDto ret = new ArticleDto();
         String sqlArticle = "select customer_id, project_id, activity_id, activity_name from databas.activity where customer_id=? and project_id=? and activity_id=?";
