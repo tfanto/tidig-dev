@@ -2,7 +2,6 @@
 
 ### Reference Documentation
 
-Fanto (c) 2021
 
 prereq
 Java minst 11
