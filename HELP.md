@@ -7,7 +7,7 @@ prereq
 Java minst 11
 Maven  installerad
 Docker installerad
-en IDE helst intelliJ  funkar pÃ¥ Eclipse ocksÃ¥  (testat pÃ¥ bÃ¤gge)
+en IDE helst intelliJ  funkar på¥ Eclipse också  (testat på bägge)
 
 efter att ha placerat (packat upp zip:en)   tidig-dev
 
